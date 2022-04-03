@@ -1,0 +1,8 @@
+.vscode
+node_modules/
+contracts/*/.eosproj
+.idea/
+*.DS_Store
+build/*
+cmake-build-debug
+.env
