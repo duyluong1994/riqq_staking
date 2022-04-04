@@ -186,10 +186,8 @@ private:
       for (uint64_t i = 0; i < user_itr->data.size(); i++)
       {
          auto config_itr = stakeconfigs.find(user_itr->data[i].first);
-         check(config_itr != stakeconfigs.end(), "Could not find stakeconfig with template_id: " + to_string(user_itr->data[i].first));
-         new_unclaimed = asset((uint64_t)(new_unclaimed.amount +
-                                          config_itr->reward_per_duration.amount *
-                                              (float)(unclaimed_micro / (config_itr->earning_duration_days * days(1).count()))),
+         check(config_itr != stakeconfigs.end(), _self.to_string() + ": Could not find stakeconfig with template_id: " + to_string(user_itr->data[i].first));
+         new_unclaimed = asset((uint64_t)(new_unclaimed.amount + (float)(user_itr->data[i].second * config_itr->reward_per_duration.amount * unclaimed_micro / (config_itr->earning_duration_days * days(1).count()))),
                                user_itr->unclaimed.symbol);
       }
       new_unclaimed += user_itr->unclaimed;
