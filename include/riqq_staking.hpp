@@ -38,7 +38,7 @@ public:
    ACTION setstakecfg(int32_t template_id,
                       name collection_name,
                       asset reward_per_duration,
-                      uint64_t earning_duration_days);
+                      uint64_t earning_duration_hours);
    // Remove stakeconfigs
    ACTION rmstakecfgs(vector<int32_t> template_ids);
 
@@ -47,6 +47,22 @@ public:
 
    // claim
    ACTION claim(name wallet);
+
+   // ACTION admintool()
+   // {
+   //    require_auth(_self);
+   //    auto itr = stakedassets.begin();
+   //    while (itr != stakedassets.end())
+   //    {
+   //       itr = stakedassets.erase(itr);
+   //    }
+
+   //    auto itr2 = users.begin();
+   //    while (itr2 != users.end())
+   //    {
+   //       itr2 = users.erase(itr2);
+   //    }
+   // }
 
    // listener mint
    [[eosio::on_notify("atomicassets::logmint")]] void
@@ -137,7 +153,7 @@ private:
    void setstakecfg_m(int32_t template_id,
                       name collection_name,
                       asset reward_per_duration,
-                      uint64_t earning_duration_days)
+                      uint64_t earning_duration_hours)
    {
       auto _setting = get_settings();
       templates_t collection_templates = get_templates(collection_name);
@@ -156,7 +172,7 @@ private:
          stakeconfigs.modify(itr, _self, [&](auto &r)
                              {
             r.reward_per_duration = reward_per_duration;
-            r.earning_duration_days = earning_duration_days; });
+            r.earning_duration_hours = earning_duration_hours; });
       }
       else
       {
@@ -165,7 +181,7 @@ private:
             r.template_id = template_id;
             r.collection_name = collection_name;
             r.reward_per_duration = reward_per_duration;
-            r.earning_duration_days = earning_duration_days; });
+            r.earning_duration_hours = earning_duration_hours; });
       }
    }
 
@@ -187,7 +203,7 @@ private:
       {
          auto config_itr = stakeconfigs.find(user_itr->data[i].first);
          check(config_itr != stakeconfigs.end(), _self.to_string() + ": Could not find stakeconfig with template_id: " + to_string(user_itr->data[i].first));
-         new_unclaimed = asset((uint64_t)(new_unclaimed.amount + (float)(user_itr->data[i].second * config_itr->reward_per_duration.amount * unclaimed_micro / (config_itr->earning_duration_days * days(1).count()))),
+         new_unclaimed = asset((uint64_t)(new_unclaimed.amount + (float)(user_itr->data[i].second * config_itr->reward_per_duration.amount * unclaimed_micro / (config_itr->earning_duration_hours * hours(1).count()))),
                                user_itr->unclaimed.symbol);
       }
       new_unclaimed += user_itr->unclaimed;
